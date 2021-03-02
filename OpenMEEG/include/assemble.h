@@ -70,7 +70,7 @@ namespace OpenMEEG {
 
     class OPENMEEG_EXPORT MonopSourceMat : public virtual Matrix {
     public:
-        MonopSourceMat(const Geometry& geo, const Matrix& dipoles, const unsigned gauss_order = 3,
+        MonopSourceMat(const Geometry& geo, const Matrix& monopoles, const unsigned gauss_order = 3,
             const bool adapt_rhs = true, const std::string& domain_name = "");
         virtual ~MonopSourceMat() {};
     };

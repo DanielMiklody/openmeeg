@@ -136,26 +136,26 @@ namespace OpenMEEG {
     }
 
 
-	MonopSourceMat::MonopSourceMat(const Geometry& geo,const Matrix& dipoles,const unsigned gauss_order,
+	MonopSourceMat::MonopSourceMat(const Geometry& geo,const Matrix& monopoles,const unsigned gauss_order,
                                const bool adapt_rhs,const std::string& domain_name)
     {
         Matrix& rhs = *this;
 
         const size_t size      = geo.nb_parameters()-geo.nb_current_barrier_triangles();
-        const size_t n_dipoles = dipoles.nlin();
+        const size_t n_dipoles = monopoles.nlin();
 
-        rhs = Matrix(size,n_dipoles);
+        rhs = Matrix(size,n_monopoles);
         rhs.set(0.0);
 
-        ProgressBar pb(n_dipoles);
+        ProgressBar pb(n_monopoles);
         Vector rhs_col(rhs.nlin());
-        for (unsigned s=0; s<n_dipoles; ++s,++pb) {
-            const Vect3 r(dipoles(s,0),dipoles(s,1),dipoles(s,2));
-            const Vect3 q(dipoles(s,3),dipoles(s,4),dipoles(s,5));
+        for (unsigned s=0; s<n_monopoles; ++s,++pb) {
+            const Vect3 r(monopoles(s,0),monopoles(s,1),monopoles(s,2));
+            const Vect3 q(monopoles(s,3),monopoles(s,4),monopoles(s,5));
 
             const Domain domain = (domain_name=="") ? geo.domain(r) : geo.domain(domain_name);
 
-            //  Only consider dipoles in non-zero conductivity domain.
+            //  Only consider monopoles in non-zero conductivity domain.
 
             const double cond = domain.conductivity();
             if (cond!=0.0) {

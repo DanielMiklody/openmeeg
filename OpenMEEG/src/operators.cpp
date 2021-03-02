@@ -141,7 +141,7 @@ namespace OpenMEEG {
         delete gauss;
     }
 
-	void operatorMonopolePotDer(const Vect3& r0,const Vect3& q,const Mesh& m,Vector& rhs,const double& coeff,const unsigned gauss_order,const bool adapt_rhs) {
+	void operatorMonopolePotDer(const Vect3& r0,const double& q,const Mesh& m,Vector& rhs,const double& coeff,const unsigned gauss_order,const bool adapt_rhs) {
         static analyticMonopPotDer anaMPD;
 
         Integrator<Vect3,analyticMonopPotDer>* gauss = (adapt_rhs) ? new AdaptiveIntegrator<Vect3,analyticMonopPotDer>(0.001) :
@@ -169,7 +169,7 @@ namespace OpenMEEG {
         delete gauss;
     }   
 
-    void operatorMonopolePot(const Vect3& r0,const Vect3& q,const Mesh& m,Vector& rhs,const double& coeff,const unsigned gauss_order,const bool adapt_rhs) {
+    void operatorMonopolePot(const Vect3& r0,const double& q,const Mesh& m,Vector& rhs,const double& coeff,const unsigned gauss_order,const bool adapt_rhs) {
         static analyticMonopPot anaMP;
 
         anaMP.init(q,r0);

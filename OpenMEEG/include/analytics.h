@@ -265,7 +265,7 @@ namespace OpenMEEG {
          analyticMonopPot(){}
         ~analyticMonopPot(){}
 
-        inline void init( const Vect3& _q, const Vect3& _r0) {
+        inline void init( const Vect3& _q, const double& _r0) {
             q = _q;
             r0 = _r0;
         }
@@ -280,7 +280,7 @@ namespace OpenMEEG {
     private:
 
         Vect3 r0;
-        Vect3 q;
+        double q;
     };
 	
 	class OPENMEEG_EXPORT analyticMonopPotDer {
@@ -289,7 +289,7 @@ namespace OpenMEEG {
          analyticMonopPotDer(){}
         ~analyticMonopPotDer(){}
 
-        void init( const Triangle& T, const Vect3 &_q, const Vect3& _r0) {
+        void init( const Triangle& T, const double &_q, const Vect3& _r0) {
             q = _q;
             r0 = _r0;
 
@@ -327,14 +327,15 @@ namespace OpenMEEG {
             // RK: B = n.grad_x(A) with grad_x(A)= q.r/||^3
             const Vect3& r   = x-r0;
             const double rn2 = r.norm2();
-            const double EMpart = dotprod(n,dotprod(q,r))/(rn2*sqrt(rn2));
+            const double EMpart = dotprod(n,q*r)/(rn2*sqrt(rn2));
 
             return EMpart*P1part; //
         }
 
     private:
 
-        Vect3 q, r0;
+        Vect3 r0;
+		double q;
         Vect3 H0, H1, H2;
         Vect3 H0p0DivNorm2, H1p1DivNorm2, H2p2DivNorm2, n;
     };
