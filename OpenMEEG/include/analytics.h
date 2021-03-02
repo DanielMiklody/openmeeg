@@ -243,38 +243,38 @@ namespace OpenMEEG {
             return -EMpart*P1part; // RK: why - sign ?
         }
     };
-    class OPENMEEG_EXPORT analyticMonopPot
+	class OPENMEEG_EXPORT analyticMonopPot
     {
         Vect3 r0;
-        double q;
+        Vect3 q;
 
     public:
         analyticMonopPot(){}
         ~analyticMonopPot(){}
 
-        inline void init(const double& _q, const Vect3& _r0) {
+        inline void init( const Vect3& _q, const Vect3& _r0) {
             q = _q;
             r0 = _r0;
         }
 
         inline double f(const Vect3& x) const {
             // RK: A = q.(x-r0)/||^3
-            Vect3 r = x - r0;
+            Vect3 r = x-r0;
             double rn = r.norm();
-            return (q) / (rn);
+            return q/rn;
         }
-    };
-    class OPENMEEG_EXPORT analyticMonopPotDer
+    };    
+    
+	class OPENMEEG_EXPORT analyticMonopPotDer
     {
-        Vect3 r0;
-        double q;
+        Vect3 q, r0;
         Vect3 H0, H1, H2;
         Vect3 H0p0DivNorm2, H1p1DivNorm2, H2p2DivNorm2, n;
 
     public:
         analyticMonopPotDer(){}
         ~analyticMonopPotDer(){}
-        inline void init(const Triangle& T, const double &_q, const Vect3& _r0) {
+        inline void init( const Triangle& T, const Vect3 &_q, const Vect3& _r0) {
             q = _q;
             r0 = _r0;
 
@@ -283,12 +283,12 @@ namespace OpenMEEG {
             p1 = T.s2();
             p2 = T.s3();
 
-            p1p0 = p0 - p1; p2p1 = p1 - p2; p0p2 = p2 - p0;
+            p1p0 = p0-p1; p2p1 = p1-p2; p0p2 = p2-p0;
             p1p0n = p1p0; p1p0n.normalize(); p2p1n = p2p1; p2p1n.normalize(); p0p2n = p0p2; p0p2n.normalize();
 
-            p1H0 = (p1p0*p2p1n)*p2p1n; H0 = p1H0 + p1; H0p0DivNorm2 = p0 - H0; H0p0DivNorm2 = H0p0DivNorm2 / H0p0DivNorm2.norm2();
-            p2H1 = (p2p1*p0p2n)*p0p2n; H1 = p2H1 + p2; H1p1DivNorm2 = p1 - H1; H1p1DivNorm2 = H1p1DivNorm2 / H1p1DivNorm2.norm2();
-            p0H2 = (p0p2*p1p0n)*p1p0n; H2 = p0H2 + p0; H2p2DivNorm2 = p2 - H2; H2p2DivNorm2 = H2p2DivNorm2 / H2p2DivNorm2.norm2();
+            p1H0 = (p1p0*p2p1n)*p2p1n; H0 = p1H0+p1; H0p0DivNorm2 = p0-H0; H0p0DivNorm2 = H0p0DivNorm2/H0p0DivNorm2.norm2();
+            p2H1 = (p2p1*p0p2n)*p0p2n; H1 = p2H1+p2; H1p1DivNorm2 = p1-H1; H1p1DivNorm2 = H1p1DivNorm2/H1p1DivNorm2.norm2();
+            p0H2 = (p0p2*p1p0n)*p1p0n; H2 = p0H2+p0; H2p2DivNorm2 = p2-H2; H2p2DivNorm2 = H2p2DivNorm2/H2p2DivNorm2.norm2();
 
             n = -p1p0^p0p2;
             n.normalize();
@@ -296,14 +296,14 @@ namespace OpenMEEG {
 
         inline Vect3 f(const Vect3& x) const
         {
-            Vect3 P1part(H0p0DivNorm2*(x - H0), H1p1DivNorm2*(x - H1), H2p2DivNorm2*(x - H2));
+            Vect3 P1part(H0p0DivNorm2*(x-H0), H1p1DivNorm2*(x-H1), H2p2DivNorm2*(x-H2));
 
             // RK: B = n.grad_x(A) with grad_x(A)= q/||^3 - 3r(q.r)/||^5
-            Vect3 r = x - r0;
+            Vect3 r = x-r0;
             double rn = r.norm();
             double EMpart = n*((q*r) / pow(rn, 3.));
 
-            return EMpart*P1part; // RK: why not - sign ?
+            return EMpart*P1part;
         }
     };
 }

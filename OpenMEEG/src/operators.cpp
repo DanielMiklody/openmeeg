@@ -141,58 +141,56 @@ namespace OpenMEEG {
         delete gauss;
     }
 
-    void operatorMonopolePotDer(const Vect3& r0, const double& q, const Mesh& m, Vector& rhs, const double& coeff, const unsigned gauss_order, const bool adapt_rhs)
-    {
+	void operatorMonopolePotDer(const Vect3& r0,const Vect3& q,const Mesh& m,Vector& rhs,const double& coeff,const unsigned gauss_order,const bool adapt_rhs) {
         static analyticMonopPotDer anaMPD;
 
-        Integrator<Vect3, analyticMonopPotDer>* gauss = (adapt_rhs) ? new AdaptiveIntegrator<Vect3, analyticMonopPotDer>(0.001) :
-            new Integrator<Vect3, analyticMonopPotDer>;
+        Integrator<Vect3,analyticMonopPotDer>* gauss = (adapt_rhs) ? new AdaptiveIntegrator<Vect3,analyticMonopPotDer>(0.001) :
+                                                                   new Integrator<Vect3,analyticMonopPotDer>;
 
         gauss->setOrder(gauss_order);
-#pragma omp parallel for private(anaMPD)
-#ifndef OPENMP_3_0
-        for (int i = 0; i<m.size(); ++i) {
-            const Mesh::const_iterator tit = m.begin() + i;
-#else
-        for (Mesh::const_iterator tit = m.begin(); tit<m.end(); ++tit) {
-#endif
-            anaMPD.init(*tit, q, r0);
-            Vect3 v = gauss->integrate(anaMPD, *tit);
-#pragma omp critical
+        #pragma omp parallel for private(anaMPD)
+        #if defined NO_OPENMP || defined OPENMP_RANGEFOR
+        for (const auto& triangle : m.triangles()) {
+        #elif defined OPENMP_ITERATOR
+        for (Triangles::const_iterator tit=m.triangles().begin();tit<m.triangles().end();++tit) {
+            const Triangle& triangle = *tit;
+        #else
+        for (int i=0;i<m.triangles().size();++i) {
+            const Triangle& triangle = *(m.triangles().begin()+i);
+        #endif
+            anaMPD.init(triangle,q,r0);
+            Vect3 v = gauss->integrate(anaMPD,triangle);
+            #pragma omp critical
             {
-                rhs(tit->s1().index()) += v(0) * coeff;
-                rhs(tit->s2().index()) += v(1) * coeff;
-                rhs(tit->s3().index()) += v(2) * coeff;
+                for (unsigned i=0;i<3;++i)
+                    rhs(triangle.vertex(i).index()) += v(i)*coeff;
             }
         }
         delete gauss;
-        }
+    }   
 
-    void operatorMonopolePot(const Vect3& r0, const double& q, const Mesh& m, Vector& rhs, const double& coeff, const unsigned gauss_order, const bool adapt_rhs)
-    {
+    void operatorMonopolePot(const Vect3& r0,const Vect3& q,const Mesh& m,Vector& rhs,const double& coeff,const unsigned gauss_order,const bool adapt_rhs) {
         static analyticMonopPot anaMP;
 
-        anaMP.init(q, r0);
-        Integrator<double, analyticMonopPot> *gauss;
-        if (adapt_rhs) {
-            gauss = new AdaptiveIntegrator<double, analyticMonopPot>(0.001);
-        }
-        else {
-            gauss = new Integrator<double, analyticMonopPot>;
-        }
-
+        anaMP.init(q,r0);
+        Integrator<double,analyticMonopPot>* gauss = (adapt_rhs) ? new AdaptiveIntegrator<double,analyticMonopPot>(0.001) :
+                                                                 new Integrator<double,analyticMonopPot>;
         gauss->setOrder(gauss_order);
-#pragma omp parallel for
-#ifndef OPENMP_3_0
-        for (int i = 0; i<m.size(); ++i) {
-            const Mesh::const_iterator tit = m.begin() + i;
-#else
-        for (Mesh::const_iterator tit = m.begin(); tit<m.end(); ++tit) {
-#endif
-            double d = gauss->integrate(anaMP, *tit);
-#pragma omp critical
-            rhs(tit->index()) += d * coeff;
+
+        #pragma omp parallel for
+        #if defined NO_OPENMP || defined OPENMP_RANGEFOR
+        for (const auto& triangle : m.triangles()) {
+        #elif defined OPENMP_ITERATOR
+        for (Triangles::const_iterator tit=m.triangles().begin();tit<m.triangles().end();++tit) {
+            const Triangle& triangle = *tit;
+        #else
+        for (int i=0;i<m.triangles().size();++i) {
+            const Triangle& triangle = *(m.triangles().begin()+i);
+        #endif
+            const double d = gauss->integrate(anaMP,triangle);
+            #pragma omp critical
+            rhs(triangle.index()) += d*coeff;
         }
         delete gauss;
-        }
+    }
 }
