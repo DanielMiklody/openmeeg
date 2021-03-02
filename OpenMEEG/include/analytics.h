@@ -265,7 +265,7 @@ namespace OpenMEEG {
          analyticMonopPot(){}
         ~analyticMonopPot(){}
 
-        inline void init( const double& _q, const double& _r0) {
+        inline void init( const double& _q, const Vect3& _r0) {
             q = _q;
             r0 = _r0;
         }
