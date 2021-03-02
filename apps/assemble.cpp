@@ -217,22 +217,21 @@ int main(int argc, char** argv)
     * Computation of RHS for discrete monopolar case
     **********************************************************************************************/
     else if (option(argc, argv, { "-MonopSourceMat", "-MSM", "-msm", "-MonopSourceMatNoAdapt", "-MSMNA", "-msmna" },
-    { "geometry file", "conductivity file", "dipoles file", "output file" })) {
+    { "geometry file", "conductivity file", "monpoles file", "output file" })) {
 
-        string domain_name = "";
+        std:string domain_name = "";
         if (argc == 7) {
             domain_name = argv[6];
-            cout << "Dipoles are considered to be in \"" << domain_name << "\" domain." << endl;
+            std:cout << "Monopoles are considered to be in \"" << domain_name << "\" domain." << endl;
         }
 
-        // Loading surfaces from geometry file.
-        Geometry geo;
-        geo.read(argv[2], argv[3], OLD_ORDERING);
+		// Loading surfaces from geometry file.
+        Geometry geo(argv[2],argv[3],OLD_ORDERING);
 
         // Loading Matrix of dipoles :
         Matrix dipoles(argv[4]);
         if (dipoles.ncol() != 4) {
-            cerr << "Dipoles File Format Error" << endl;
+            std:cerr << "Dipoles File Format Error" << std:endl;
             exit(1);
         }
 
