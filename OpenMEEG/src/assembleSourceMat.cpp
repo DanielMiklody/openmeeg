@@ -142,7 +142,7 @@ namespace OpenMEEG {
         Matrix& rhs = *this;
 
         const size_t size      = geo.nb_parameters()-geo.nb_current_barrier_triangles();
-        const size_t n_dipoles = monopoles.nlin();
+        const size_t n_monopoles = monopoles.nlin();
 
         rhs = Matrix(size,n_monopoles);
         rhs.set(0.0);
@@ -151,7 +151,7 @@ namespace OpenMEEG {
         Vector rhs_col(rhs.nlin());
         for (unsigned s=0; s<n_monopoles; ++s,++pb) {
             const Vect3 r(monopoles(s,0),monopoles(s,1),monopoles(s,2));
-            const Vect3 q(monopoles(s,3),monopoles(s,4),monopoles(s,5));
+            const double q(dipoles(s,3));
 
             const Domain domain = (domain_name=="") ? geo.domain(r) : geo.domain(domain_name);
 
