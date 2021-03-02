@@ -219,10 +219,10 @@ int main(int argc, char** argv)
     else if (option(argc, argv, { "-MonopSourceMat", "-MSM", "-msm", "-MonopSourceMatNoAdapt", "-MSMNA", "-msmna" },
     { "geometry file", "conductivity file", "monpoles file", "output file" })) {
 
-        std:string domain_name = "";
+        std::string domain_name = "";
         if (argc == 7) {
             domain_name = argv[6];
-            std:cout << "Monopoles are considered to be in \"" << domain_name << "\" domain." << endl;
+            std::cout << "Monopoles are considered to be in \"" << domain_name << "\" domain." <<std:: endl;
         }
 
 		// Loading surfaces from geometry file.
@@ -231,7 +231,7 @@ int main(int argc, char** argv)
         // Loading Matrix of dipoles :
         Matrix dipoles(argv[4]);
         if (dipoles.ncol() != 4) {
-            std:cerr << "Dipoles File Format Error" << std:endl;
+            std::cerr << "Dipoles File Format Error" << std::endl;
             exit(1);
         }
 
