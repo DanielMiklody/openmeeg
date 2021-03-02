@@ -151,7 +151,7 @@ namespace OpenMEEG {
         Vector rhs_col(rhs.nlin());
         for (unsigned s=0; s<n_monopoles; ++s,++pb) {
             const Vect3 r(monopoles(s,0),monopoles(s,1),monopoles(s,2));
-            const double q(dipoles(s,3));
+            const double q(monopoles(s,3));
 
             const Domain domain = (domain_name=="") ? geo.domain(r) : geo.domain(domain_name);
 
